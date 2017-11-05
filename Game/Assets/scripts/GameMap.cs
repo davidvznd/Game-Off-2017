@@ -7,6 +7,9 @@ public class GameMap : MonoBehaviour {
     public GameObject Room;
     public GameObject Wall;
     public GameObject Player;
+    public Camera GameCamera;
+    Camera CameraSettings;
+    RectTransform TransformSettings;
 
     char[,] maze = new char[21, 21];
     int[] directionArr;
@@ -113,24 +116,40 @@ public class GameMap : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         GenerateMaze();
+        int playerX = Random.Range(0, 21);
+        int playerY = Random.Range(0, 21);
+        while (maze[playerY, playerX] == '#')
+        {
+            playerY = Random.Range(0, 21);
+            playerX = Random.Range(0, 21);
+        }
+        maze[playerY, playerX] = 'P';
+
+        CameraSettings = GameCamera.GetComponent<Camera>();
+        TransformSettings = GameCamera.GetComponent<RectTransform>();
         for (int y = 0; y < 21; y++)
         {
             for (int x = 0; x < 21; x++)
             {
                 if (maze[y,x] == ' ')
                 {
-                    Instantiate(Room, new Vector3(0.33f * x, 0.33f * y, 0), Quaternion.identity);
+                    Instantiate(Room, new Vector3(x, y, 0), Quaternion.identity);
+                }
+                else if (maze[y,x] == 'P')
+                {
+                    Instantiate(Player, new Vector3(x, y, 0), Quaternion.identity);
+                    TransformSettings.SetPositionAndRotation(new Vector3(x, y, -10), Quaternion.identity);
                 }
                 else 
                 {
-                    Instantiate(Wall, new Vector3(0.33f * x, 0.33f * y, 0), Quaternion.identity);
+                    Instantiate(Wall, new Vector3(x, y, 0), Quaternion.identity);
                 }
             }
         }
+        CameraSettings.orthographicSize = 4.0f;
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
 	}
 }
