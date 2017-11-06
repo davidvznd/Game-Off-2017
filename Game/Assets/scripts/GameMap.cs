@@ -8,11 +8,9 @@ public class GameMap : MonoBehaviour {
     public GameObject Wall;
     public GameObject Player;
     public Camera GameCamera;
-    Camera CameraSettings;
-    RectTransform TransformSettings;
+    public GameObject test;
 
     char[,] maze = new char[21, 21];
-    int[] directionArr;
     void Recursion(int X, int Y)
     {
         List<int> directionArr = new List<int> { 1, 2, 3, 4};
@@ -124,9 +122,7 @@ public class GameMap : MonoBehaviour {
             playerX = Random.Range(0, 21);
         }
         maze[playerY, playerX] = 'P';
-
-        CameraSettings = GameCamera.GetComponent<Camera>();
-        TransformSettings = GameCamera.GetComponent<RectTransform>();
+        
         for (int y = 0; y < 21; y++)
         {
             for (int x = 0; x < 21; x++)
@@ -137,8 +133,9 @@ public class GameMap : MonoBehaviour {
                 }
                 else if (maze[y,x] == 'P')
                 {
-                    Instantiate(Player, new Vector3(x, y, 0), Quaternion.identity);
-                    TransformSettings.SetPositionAndRotation(new Vector3(x, y, -10), Quaternion.identity);
+                    Instantiate(Room, new Vector3(x, y, 0), Quaternion.identity);
+                    test = GameObject.Find("PlayerVisual");
+                    test.transform.position = new Vector3(x, y, 0);
                 }
                 else 
                 {
@@ -146,10 +143,11 @@ public class GameMap : MonoBehaviour {
                 }
             }
         }
-        CameraSettings.orthographicSize = 4.0f;
     }
 	
 	// Update is called once per frame
 	void Update () {
-	}
+
+
+    }
 }
