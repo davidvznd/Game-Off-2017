@@ -7,11 +7,11 @@ public class CameraController : MonoBehaviour {
     public Camera myCamera;
 	// Use this for initialization
 	void Start () {
-        myCamera.orthographicSize = 6.0f;
+        myCamera.orthographicSize = 5.5f;
     }
 
     void Update()
     {
-        transform.position = new Vector3(player.transform.position.x,player.transform.position.y, -10); // Camera follows the player with specified offset position
+        //transform.position = new Vector3(player.transform.position.x,player.transform.position.y, -10); // Camera follows the player with specified offset position
     }
 }

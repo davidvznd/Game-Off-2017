@@ -3,69 +3,152 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+    // Player Position
+    public int positionX;
+    public int positionY;
+
+    //Sprites
     public Sprite Up;
     public Sprite Down;
     public Sprite Left;
     public Sprite Right;
     public SpriteRenderer SpriteSettings;
 
-    public Camera GameCamera;
-    Camera CameraSettings;
-    RectTransform TransformSettings;
+    //Reference to map
+    public GameMap map;
+    int DirectionValue;
 
     // Use this for initialization
     void Start() {
+
     }
 
     void Movement() {
+        // Right equals value 1
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            transform.Translate(1, 0, 0);
-            SpriteSettings.sprite = Right;
+            if (CheckMove(1))
+            {
+                transform.Translate(1, 0, 0);
+                map.maze[positionY, positionX + 1] = 'P';
+                map.maze[positionY, positionX] = ' ';
+                positionX += 1;
+                SpriteSettings.sprite = Right;
+            }
+            else
+            {
+                Debug.Log("Can't move");
+            }
         }
+
+        // Left equals value 2
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            transform.Translate(-1, 0, 0);
-            SpriteSettings.sprite = Left;
+            if (CheckMove(2))
+            {
+                transform.Translate(-1, 0, 0);
+                map.maze[positionY, positionX - 1] = 'P';
+                map.maze[positionY, positionX] = ' ';
+                positionX -= 1;
+                SpriteSettings.sprite = Left;
+            }
+            else
+            {
+                Debug.Log("Can't move");
+            }
         }
+
+        // Up equals value 3
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            transform.Translate(0, 1, 0);
-            SpriteSettings.sprite = Up;
+            if (CheckMove(3))
+            {
+                transform.Translate(0, 1, 0);
+                map.maze[positionY + 1, positionX] = 'P';
+                map.maze[positionY, positionX] = ' ';
+                positionY += 1;
+                SpriteSettings.sprite = Up;
+            }
+            else
+            {
+                Debug.Log("Can't move");
+            }
         }
+
+        // Down equals value 4
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            transform.Translate(0, -1, 0);
-            SpriteSettings.sprite = Down;
+            if (CheckMove(4))
+            {
+                transform.Translate(0, -1, 0);
+                map.maze[positionY - 1, positionX] = 'P';
+                map.maze[positionY, positionX] = ' ';
+                positionY -= 1;
+                SpriteSettings.sprite = Down;
+            }
+            else
+            {
+                Debug.Log("Can't move");
+            }
         }
     }
-	
-    void Motion()
+
+    bool CheckMove(int value)
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (value == 1)
         {
-            transform.Translate(1, 0, 0);
-            SpriteSettings.sprite = Right;
+            if(map.maze[positionY,positionX + 1] == '#')
+            {
+                return false;
+            }
+            else
+            {
+                //Movement code
+                return true;
+            }
         }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (value == 2)
         {
-            transform.Translate(-1, 0, 0);
-            SpriteSettings.sprite = Left;
+            if (map.maze[positionY, positionX - 1] == '#')
+            {
+                return false;
+            }
+            else
+            {
+                //Movement code
+                return true;
+            }
         }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (value == 3)
         {
-            transform.Translate(0, 1, 0);
-            SpriteSettings.sprite = Up;
+            if (map.maze[positionY + 1, positionX] == '#')
+            {
+                return false;
+            }
+            else
+            {
+                //Movement code
+                return true;
+            }
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        else
         {
-            transform.Translate(0, -1, 0);
-            SpriteSettings.sprite = Down;
+            if (map.maze[positionY -1, positionX] == '#')
+            {
+                return false;
+            }
+            else
+            {
+                //Movement code
+                return true;
+            }
         }
+        
     }
 
 	// Update is called once per frame
 	void Update () {
+        Debug.Log("X: " + positionX + ", " + positionY);
         Movement();
     }
 }

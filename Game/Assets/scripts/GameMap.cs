@@ -6,11 +6,10 @@ using UnityEngine;
 public class GameMap : MonoBehaviour {
     public GameObject Room;
     public GameObject Wall;
-    public GameObject Player;
     public Camera GameCamera;
-    public GameObject test;
+    public Player test;
 
-    char[,] maze = new char[21, 21];
+    public char[,] maze = new char[15, 15];
     void Recursion(int X, int Y)
     {
         List<int> directionArr = new List<int> { 1, 2, 3, 4};
@@ -43,7 +42,7 @@ public class GameMap : MonoBehaviour {
                     }
                     break;
                 case 2:
-                    if (X + 2 >= 21)
+                    if (X + 2 >= 11)
                     {
                         continue;
                     }
@@ -55,7 +54,7 @@ public class GameMap : MonoBehaviour {
                     }
                     break;
                 case 3:
-                    if (Y + 2 >= 21)
+                    if (Y + 2 >= 11)
                     {
                         continue;
                     }
@@ -90,17 +89,17 @@ public class GameMap : MonoBehaviour {
         //0 to 14 X and Y for start maze position
         while (startX % 2 == 0)
         {
-            startX = Random.Range(0, 21);
+            startX = Random.Range(0, 11);
         }
         while (startY % 2 == 0)
         {
-            startY = Random.Range(0, 21);
+            startY = Random.Range(0, 11);
         }
 
 
-        for (int i = 0; i < 21; i++)
+        for (int i = 0; i < 11; i++)
         {
-            for (int j = 0; j < 21; j++)
+            for (int j = 0; j < 11; j++)
             {
                 maze[i,j] = '#';
             }
@@ -114,18 +113,20 @@ public class GameMap : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         GenerateMaze();
-        int playerX = Random.Range(0, 21);
-        int playerY = Random.Range(0, 21);
+        int playerX = Random.Range(0, 11);
+        int playerY = Random.Range(0, 11);
         while (maze[playerY, playerX] == '#')
         {
-            playerY = Random.Range(0, 21);
-            playerX = Random.Range(0, 21);
+            playerY = Random.Range(0, 11);
+            playerX = Random.Range(0, 11);
         }
         maze[playerY, playerX] = 'P';
-        
-        for (int y = 0; y < 21; y++)
+        test.positionY = playerY;
+        test.positionX = playerX;
+
+        for (int y = 0; y < 11; y++)
         {
-            for (int x = 0; x < 21; x++)
+            for (int x = 0; x < 11; x++)
             {
                 if (maze[y,x] == ' ')
                 {
@@ -134,7 +135,6 @@ public class GameMap : MonoBehaviour {
                 else if (maze[y,x] == 'P')
                 {
                     Instantiate(Room, new Vector3(x, y, 0), Quaternion.identity);
-                    test = GameObject.Find("PlayerVisual");
                     test.transform.position = new Vector3(x, y, 0);
                 }
                 else 
