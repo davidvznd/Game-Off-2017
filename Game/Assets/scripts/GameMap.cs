@@ -4,10 +4,17 @@ using System.Linq;
 using UnityEngine;
 
 public class GameMap : MonoBehaviour {
-    public GameObject Room;
-    public GameObject Wall;
+    public GameObject RoomObj;
+    public GameObject WallObj;
+    public GameObject ItemObj;
+    public GameObject MonsterObj;
+    public GameObject ExitObj;
     public Camera GameCamera;
-    public Player test;
+    public Player PlayerObj;
+    List<Item> ItemList;
+    public int playerY;
+    public int playerX;
+    public bool CallMapChange; 
 
     public char[,] maze = new char[15, 15];
     void Recursion(int X, int Y)
@@ -22,7 +29,7 @@ public class GameMap : MonoBehaviour {
             directionArr[i] = directionArr[randomIndex];
             directionArr[randomIndex] = temp;
         }
-        Debug.Log(directionArr[0] + "," + directionArr[1] + "," + directionArr[2] + "," + directionArr[3]);
+        //Debug.Log(directionArr[0] + "," + directionArr[1] + "," + directionArr[2] + "," + directionArr[3]);
 
         for (int i = 0; i < directionArr.Count; i++)
         {
@@ -96,7 +103,7 @@ public class GameMap : MonoBehaviour {
             startY = Random.Range(0, 11);
         }
 
-
+        //ALL WALLS
         for (int i = 0; i < 11; i++)
         {
             for (int j = 0; j < 11; j++)
@@ -106,48 +113,188 @@ public class GameMap : MonoBehaviour {
         }
         maze[startY,startX] = ' ';
 
-        //Initialize Recrusion
+        //Initialize Recrusion to build the maze
         Recursion(startX, startY);
+        
+        //Start putting items and monsters in, we have about 70-80 to work with
     }
 
-	// Use this for initialization
-	void Start () {
+    void GenerateMonIt()
+    {
+        bool ExitCreated = false;
+        while (ExitCreated == false)
+        {
+            int i = Random.Range(1, 10);
+            int j = Random.Range(1, 10);
+            if (maze[i, j] == ' ')
+            {
+                if ((maze[i, j + 1] == '#' && maze[i, j - 1] == '#' && maze[i + 1, j] == '#') ||
+                    (maze[i, j + 1] == '#' && maze[i, j - 1] == '#' && maze[i - 1, j] == '#') ||
+                    (maze[i + 1, j] == '#' && maze[i - 1, j] == '#' && maze[i, j - 1] == '#') ||
+                    (maze[i + 1, j] == '#' && maze[i - 1, j] == '#' && maze[i, j + 1] == '#'))
+                {
+                    maze[i, j] = 'E';
+                    ExitCreated = true;
+                }
+            }
+        }
+
+        //Slightly inefficient but it works. 
+        int ItemsLeftToSpawn = 3;
+        int Attempts = 0;
+        while (ItemsLeftToSpawn > 0 && Attempts < 200)
+        {
+            int i = Random.Range(1, 10);
+            int j = Random.Range(1, 10);
+            if (maze[i, j] == ' ')
+            {
+                if ((maze[i, j + 1] == '#' && maze[i, j - 1] == '#' && maze[i + 1, j] == '#') ||
+                    (maze[i, j + 1] == '#' && maze[i, j - 1] == '#' && maze[i - 1, j] == '#') ||
+                    (maze[i + 1, j] == '#' && maze[i - 1, j] == '#' && maze[i, j - 1] == '#') ||
+                    (maze[i + 1, j] == '#' && maze[i - 1, j] == '#' && maze[i, j + 1] == '#'))
+                {
+                    maze[i, j] = 'I';
+                    ItemsLeftToSpawn -= 1;
+                }
+                Attempts += 1;
+            }
+        }
+
+        //Monsters next!
+        int MonstersLeftToSpawn = 4;
+        while (MonstersLeftToSpawn > 0)
+        {
+            int monsterY = Random.Range(1, 10);
+            int monsterX = Random.Range(1, 10);
+            if (maze[monsterY,monsterX] == ' ')
+            {
+                maze[monsterY, monsterX] = 'M';
+                MonstersLeftToSpawn -= 1;
+            }
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
         GenerateMaze();
-        int playerX = Random.Range(0, 11);
-        int playerY = Random.Range(0, 11);
+
+        //Create player last
+        playerX = Random.Range(1, 10);
+        playerY = Random.Range(1, 10);
         while (maze[playerY, playerX] == '#')
         {
-            playerY = Random.Range(0, 11);
-            playerX = Random.Range(0, 11);
+            playerY = Random.Range(1, 10);
+            playerX = Random.Range(1, 10);
         }
         maze[playerY, playerX] = 'P';
-        test.positionY = playerY;
-        test.positionX = playerX;
+        //Debug.Log(playerX);
+        //Debug.Log(playerY);
+        GenerateMonIt();
 
+        //Visual side of maze
         for (int y = 0; y < 11; y++)
         {
             for (int x = 0; x < 11; x++)
             {
                 if (maze[y,x] == ' ')
                 {
-                    Instantiate(Room, new Vector3(x, y, 0), Quaternion.identity);
+                    //Empty Room
+                    Instantiate(RoomObj, new Vector3(x, y, 0), Quaternion.identity);
+
                 }
                 else if (maze[y,x] == 'P')
                 {
-                    Instantiate(Room, new Vector3(x, y, 0), Quaternion.identity);
-                    test.transform.position = new Vector3(x, y, 0);
+                    //Player
+                    Instantiate(RoomObj, new Vector3(x, y, 0), Quaternion.identity);
+                    Instantiate(PlayerObj, new Vector3(x, y, 0), Quaternion.identity);
+                }
+                else if (maze[y,x] == 'I')
+                {
+                    GameObject Test;
+                    Item script;
+                    //Items
+                    Instantiate(RoomObj, new Vector3(x, y, 0), Quaternion.identity);
+                    Test = Instantiate(ItemObj, new Vector3(x, y, 0), Quaternion.identity);
+                    script = Test.GetComponent<Item>();
+                    script.positionX = x;
+                    script.positionY = y;
+                }
+                else if (maze[y, x] == 'M')
+                {
+                    GameObject Test;
+                    Monster script;
+
+                    //Monsters
+                    Instantiate(RoomObj, new Vector3(x, y, 0), Quaternion.identity);
+                    Test = Instantiate(MonsterObj, new Vector3(x, y, 0), Quaternion.identity);
+                    script = Test.GetComponent<Monster>();
+                    script.positionX = x;
+                    script.positionY = y;
+                }
+                else if (maze[y, x] == 'E')
+                {
+                    Instantiate(ExitObj, new Vector3(x, y, 0), Quaternion.identity);
                 }
                 else 
                 {
-                    Instantiate(Wall, new Vector3(x, y, 0), Quaternion.identity);
+                    //Wall
+                    Instantiate(WallObj, new Vector3(x, y, 0), Quaternion.identity);
                 }
             }
         }
     }
 	
+    void UpdateTheMap(bool call) {
+        if (call)
+        {
+            //Visual side of maze
+            for (int y = 0; y < 11; y++)
+            {
+                for (int x = 0; x < 11; x++)
+                {
+                    if (maze[y, x] == ' ')
+                    {
+                        //Empty Room
+                        Instantiate(RoomObj, new Vector3(x, y, 0), Quaternion.identity);
+                    }
+                    else if (maze[y, x] == 'P')
+                    {
+                        //Player
+                        Instantiate(RoomObj, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(PlayerObj, new Vector3(x, y, 0), Quaternion.identity);
+                    }
+                    else if (maze[y, x] == 'I')
+                    {
+                        //Items
+                        Instantiate(RoomObj, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(ItemObj, new Vector3(x, y, 0), Quaternion.identity);
+                    }
+                    else if (maze[y, x] == 'M')
+                    {
+                        //Monsters
+                        Instantiate(RoomObj, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(MonsterObj, new Vector3(x, y, 0), Quaternion.identity);
+                    }
+                    else if (maze[y, x] == 'E')
+                    {
+                        Instantiate(ExitObj, new Vector3(x, y, 0), Quaternion.identity);
+                    }
+                    else
+                    {
+                        //Wall
+                        Instantiate(WallObj, new Vector3(x, y, 0), Quaternion.identity);
+                    }
+                }
+            }
+            call = false;
+        }
+        else
+        {
+            //Debug.Log("Nothing to change - MAP");
+        }
+    }
+
 	// Update is called once per frame
 	void Update () {
-
-
     }
 }

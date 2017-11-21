@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
     // Player Position
-    public int positionX;
-    public int positionY;
+    int positionX;
+    int positionY;
 
     //Sprites
     public Sprite Up;
@@ -16,12 +16,17 @@ public class Player : MonoBehaviour {
 
     //Reference to map
     public GameMap map;
-    int DirectionValue;
+    public UnitController unitcont;
 
     // Use this for initialization
     void Start() {
-
+        map = GameObject.Find("Map").GetComponent<GameMap>();
+        positionX = map.playerX;
+        positionY = map.playerY; 
     }
+
+    public int GetPositionX() { return positionX; }
+    public int GetPositionY() { return positionY; }
 
     void Movement() {
         // Right equals value 1
@@ -34,6 +39,19 @@ public class Player : MonoBehaviour {
                 map.maze[positionY, positionX] = ' ';
                 positionX += 1;
                 SpriteSettings.sprite = Right;
+                Debug.Log("X: " + positionX + ", Y:" + positionY);
+            }
+            else if (map.maze[positionY, positionX + 1] == 'M')
+            {
+                //attack boi
+                Debug.Log("ATTACK");
+                foreach (GameObject unit in unitcont.Enemies)
+                {
+                    if (unit.GetComponent<Monster>().positionX == positionX + 1 && unit.GetComponent<Monster>().positionY == positionY)
+                    {
+                        Attack(unit);
+                    }
+                }
             }
             else
             {
@@ -51,6 +69,19 @@ public class Player : MonoBehaviour {
                 map.maze[positionY, positionX] = ' ';
                 positionX -= 1;
                 SpriteSettings.sprite = Left;
+                Debug.Log("X: " + positionX + ", Y:" + positionY);
+            }
+            else if (map.maze[positionY, positionX - 1] == 'M')
+            {
+                //attack boi
+                Debug.Log("ATTACK");
+                foreach(GameObject unit in unitcont.Enemies)
+                {
+                    if (unit.GetComponent<Monster>().positionX == positionX - 1 && unit.GetComponent<Monster>().positionY == positionY)
+                    {
+                        Attack(unit);
+                    }
+                }
             }
             else
             {
@@ -68,6 +99,19 @@ public class Player : MonoBehaviour {
                 map.maze[positionY, positionX] = ' ';
                 positionY += 1;
                 SpriteSettings.sprite = Up;
+                Debug.Log("X: " + positionX + ", Y:" + positionY);
+            }
+            else if (map.maze[positionY + 1, positionX] == 'M')
+            {
+                //attack boi
+                Debug.Log("ATTACK");
+                foreach (GameObject unit in unitcont.Enemies)
+                {
+                    if (unit.GetComponent<Monster>().positionX == positionX && unit.GetComponent<Monster>().positionY == positionY + 1)
+                    {
+                        Attack(unit);
+                    }
+                }
             }
             else
             {
@@ -85,6 +129,19 @@ public class Player : MonoBehaviour {
                 map.maze[positionY, positionX] = ' ';
                 positionY -= 1;
                 SpriteSettings.sprite = Down;
+                Debug.Log("X: " + positionX + ", Y:" + positionY);
+            }
+            else if (map.maze[positionY - 1, positionX] == 'M')
+            {
+                //attack boi
+                Debug.Log("ATTACK");
+                foreach (GameObject unit in unitcont.Enemies)
+                {
+                    if (unit.GetComponent<Monster>().positionX == positionX && unit.GetComponent<Monster>().positionY == positionY - 1)
+                    {
+                        Attack(unit);
+                    }
+                }
             }
             else
             {
@@ -97,7 +154,7 @@ public class Player : MonoBehaviour {
     {
         if (value == 1)
         {
-            if(map.maze[positionY,positionX + 1] == '#')
+            if(map.maze[positionY,positionX + 1] == '#' || map.maze[positionY, positionX + 1] == 'M')
             {
                 return false;
             }
@@ -109,7 +166,7 @@ public class Player : MonoBehaviour {
         }
         else if (value == 2)
         {
-            if (map.maze[positionY, positionX - 1] == '#')
+            if (map.maze[positionY, positionX - 1] == '#' || map.maze[positionY, positionX - 1] == 'M')
             {
                 return false;
             }
@@ -121,7 +178,7 @@ public class Player : MonoBehaviour {
         }
         else if (value == 3)
         {
-            if (map.maze[positionY + 1, positionX] == '#')
+            if (map.maze[positionY + 1, positionX] == '#' || map.maze[positionY + 1, positionX] == 'M')
             {
                 return false;
             }
@@ -133,7 +190,7 @@ public class Player : MonoBehaviour {
         }
         else
         {
-            if (map.maze[positionY -1, positionX] == '#')
+            if (map.maze[positionY -1, positionX] == '#' || map.maze[positionY - 1, positionX] == 'M')
             {
                 return false;
             }
@@ -146,9 +203,13 @@ public class Player : MonoBehaviour {
         
     }
 
+    void Attack(GameObject unit)
+    {
+        unit.GetComponent<Monster>().health -= 1;
+    }
+
 	// Update is called once per frame
-	void Update () {
-        Debug.Log("X: " + positionX + ", " + positionY);
+	public void UpdatePlayer () {
         Movement();
     }
 }
