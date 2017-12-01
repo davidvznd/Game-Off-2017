@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114777758464697188}
   m_Layer: 0
   m_Name: item_loot_blue
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -52,6 +52,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc5a0c758584f56449754703f0d71c52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ItemName: 
+  PlayerRef: {fileID: 114230359905971406, guid: 25360ed58664d2b498e219c157ac5887,
+    type: 2}
+  Value: 1
+  positionX: 0
+  positionY: 0
 --- !u!212 &212867356848604262
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Monster : MonoBehaviour {
     //Sprites
@@ -11,102 +12,125 @@ public class Monster : MonoBehaviour {
 
     public string MonsterName;
     public int health;
+    public int attack;
     public int positionX;
     public int positionY;
     public GameMap map;
-    public Player PlayerRef;
+    Player PlayerRef;
+    public bool isActive;
+    public Text enemyfeedback;
+    public bool FeedbackActive;
+    public int AttackIndicator = 0;
 
     void Start()
     {
+        PlayerRef = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         map = GameObject.Find("Map").GetComponent<GameMap>();
-        health = 1;
+        enemyfeedback = GameObject.Find("EnemyFeedback").GetComponent<Text>();
+        health = map.levelvalue;
+        attack = map.levelvalue;
+        isActive = true;
     }
 
     public void UpdateMonster()
     {
-        List<int> directionArr = new List<int> { 1, 2, 3, 4 };
-        //Return 1-4, chooses which place to search first
-        for (int i = 0; i < directionArr.Count; i++)
+        if (isActive)
         {
-            int temp = directionArr[i];
-            int randomIndex = Random.Range(i, directionArr.Count);
-            directionArr[i] = directionArr[randomIndex];
-            directionArr[randomIndex] = temp;
-        }
-
-        Debug.Log(positionX + ',' + positionY);
-        //Check if Up,Down,Left or Right is player
-        if (map.maze[positionY, positionX + 1] == 'P' || map.maze[positionY, positionX - 1] == 'P' || map.maze[positionY + 1, positionX] == 'P' || map.maze[positionY - 1, positionX] == 'P')
-        {
-            //Attack(PlayerRef);
-        }
-        else
-        {
-            //Search for movable position
+            List<int> directionArr = new List<int> { 1, 2, 3, 4 };
+            //Return 1-4, chooses which place to search first
             for (int i = 0; i < directionArr.Count; i++)
             {
-                //Right
-                if (directionArr[i] == 1)
+                int temp = directionArr[i];
+                int randomIndex = Random.Range(i, directionArr.Count);
+                directionArr[i] = directionArr[randomIndex];
+                directionArr[randomIndex] = temp;
+            }
+
+
+            //Check if Up,Down,Left or Right is player
+            if (map.maze[positionY, positionX + 1] == 'P' || map.maze[positionY, positionX - 1] == 'P' || map.maze[positionY + 1, positionX] == 'P' || map.maze[positionY - 1, positionX] == 'P')
+            {
+                Debug.Log("ENEMY Attack");
+                Attack(PlayerRef);
+            }
+            else
+            {
+                //Search for movable position
+                for (int i = 0; i < directionArr.Count; i++)
                 {
-                    if (map.maze[positionY, positionX + 1] != '#' && map.maze[positionY, positionX + 1] != 'M')
+                    //Right
+                    if (directionArr[i] == 1)
                     {
-                        //Movement code
-                        transform.Translate(1, 0, 0);
-                        map.maze[positionY, positionX + 1] = 'M';
-                        map.maze[positionY, positionX] = ' ';
-                        positionX += 1;
-                        SpriteSettings.sprite = Right;
-                        Debug.Log("RIGHT");
-                        break;
+                        if (map.maze[positionY, positionX + 1] == ' ')
+                        {
+                            //Movement code
+                            transform.Translate(1, 0, 0);
+                            map.maze[positionY, positionX + 1] = 'M';
+                            map.maze[positionY, positionX] = ' ';
+                            positionX += 1;
+                            SpriteSettings.sprite = Right;
+                            break;
+                        }
                     }
-                }
-                if (directionArr[i] == 2)
-                {
-                    if (map.maze[positionY, positionX - 1] != '#' && map.maze[positionY, positionX - 1] != 'M')
+                    if (directionArr[i] == 2)
                     {
-                        //Movement code
-                        transform.Translate(-1, 0, 0);
-                        map.maze[positionY, positionX - 1] = 'M';
-                        map.maze[positionY, positionX] = ' ';
-                        positionX -= 1;
-                        SpriteSettings.sprite = Left;
-                        Debug.Log("LEFT");
-                        break;
+                        if (map.maze[positionY, positionX - 1] == ' ')
+                        {
+                            //Movement code
+                            transform.Translate(-1, 0, 0);
+                            map.maze[positionY, positionX - 1] = 'M';
+                            map.maze[positionY, positionX] = ' ';
+                            positionX -= 1;
+                            SpriteSettings.sprite = Left;
+                            break;
+                        }
                     }
-                }
-                if (directionArr[i] == 3)
-                {
-                    if (map.maze[positionY + 1, positionX] != '#' && map.maze[positionY + 1, positionX] != 'M')
+                    if (directionArr[i] == 3)
                     {
-                        //Movement code
-                        transform.Translate(0, 1, 0);
-                        map.maze[positionY + 1, positionX] = 'M';
-                        map.maze[positionY, positionX] = ' ';
-                        positionY += 1;
-                        Debug.Log("UP");
-                        break;
+                        if (map.maze[positionY + 1, positionX] == ' ')
+                        {
+                            //Movement code
+                            transform.Translate(0, 1, 0);
+                            map.maze[positionY + 1, positionX] = 'M';
+                            map.maze[positionY, positionX] = ' ';
+                            positionY += 1;
+                            break;
+                        }
                     }
-                }
-                if (directionArr[i] == 4)
-                {
-                    if (map.maze[positionY - 1, positionX] != '#' && map.maze[positionY - 1, positionX] != 'M')
+                    if (directionArr[i] == 4)
                     {
-                        //Movement code
-                        transform.Translate(0, -1, 0);
-                        map.maze[positionY - 1, positionX] = 'M';
-                        map.maze[positionY, positionX] = ' ';
-                        positionY -= 1;
-                        Debug.Log("DOWN");
-                        break;
+                        if (map.maze[positionY - 1, positionX] == ' ')
+                        {
+                            //Movement code
+                            transform.Translate(0, -1, 0);
+                            map.maze[positionY - 1, positionX] = 'M';
+                            map.maze[positionY, positionX] = ' ';
+                            positionY -= 1;
+                            break;
+                        }
                     }
                 }
             }
-            Debug.Log("Break Succ");
         }
     }
 
     void Attack(Player unit) 
-    { 
-        //Unit takes damage
+    {
+        AttackIndicator = 1;
+        attack = map.levelvalue;
+        //Monsters attack is equal
+        unit.health -= attack;
+        enemyfeedback.text = "Enemy has attacked you!";
+
+        Debug.Log("Change alpha of text");
+        Color currColor = enemyfeedback.color;
+        currColor.a = 1.0f;
+        FeedbackActive = false;
+        enemyfeedback.color = currColor;
+        if (unit.health <= 0)
+        {
+            map.UnitContRef.Alive = 0;
+        }
     }
 }
+;

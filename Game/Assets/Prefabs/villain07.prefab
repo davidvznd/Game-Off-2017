@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212152779433396812}
   - component: {fileID: 114623752692936846}
   - component: {fileID: 222909799325141746}
+  - component: {fileID: 114240304170829166}
   m_Layer: 0
   m_Name: villain07
   m_TagString: Enemy
@@ -29,6 +30,39 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114240304170829166
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1778359886089360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 1, b: 0.17241383, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: asfasfsd
 --- !u!114 &114623752692936846
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -45,11 +79,14 @@ MonoBehaviour:
   SpriteSettings: {fileID: 212152779433396812}
   MonsterName: 
   health: 0
+  attack: 0
   positionX: 0
   positionY: 0
   map: {fileID: 0}
-  PlayerRef: {fileID: 114306552661830798, guid: 25360ed58664d2b498e219c157ac5887,
-    type: 2}
+  isActive: 0
+  enemyfeedback: {fileID: 0}
+  FeedbackActive: 0
+  AttackIndicator: 0
 --- !u!212 &212152779433396812
 SpriteRenderer:
   m_ObjectHideFlags: 1
