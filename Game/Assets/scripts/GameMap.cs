@@ -370,6 +370,9 @@ public class GameMap : MonoBehaviour {
 	void Update () {
         Floor.text = "Floor " + levelvalue;
         UpdateTheMap(CallMapChange);
-
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 }

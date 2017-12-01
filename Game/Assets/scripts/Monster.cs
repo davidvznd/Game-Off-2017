@@ -127,10 +127,6 @@ public class Monster : MonoBehaviour {
         currColor.a = 1.0f;
         FeedbackActive = false;
         enemyfeedback.color = currColor;
-        if (unit.health <= 0)
-        {
-            map.UnitContRef.Alive = 0;
-        }
     }
 }
 ;

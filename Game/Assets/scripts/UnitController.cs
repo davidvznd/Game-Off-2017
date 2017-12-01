@@ -8,7 +8,7 @@ public class UnitController : MonoBehaviour {
     int playerY;
     int oplayerX;
     int oplayerY;
-    public int Alive = 1;
+    public int Alive;
     GameObject CurrentPlayer;
     GameObject EnemyToDelete;
     GameMap map;
@@ -31,6 +31,7 @@ public class UnitController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        Alive = 1;
         oldlevelvalue = 1;
         levelvalue = 1;
         enemyfeedback = GameObject.Find("EnemyFeedback").GetComponent<Text>();
@@ -56,6 +57,16 @@ public class UnitController : MonoBehaviour {
     // Does array remove things that no longer exist?
     void Update()
     {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
+        if (PlayerController.health <= 0)
+        {
+            Alive = 0;
+        }
+        Debug.Log(Alive);
         if (Alive == 1)
         {
             Color currColorScreen = Screen.color;
